@@ -61,19 +61,6 @@ contract CrvUsdSturdyLenderAprOracle is AprOracleBase {
 
     /**
      * @notice Will return the expected Apr of a strategy post a debt change.
-     * @dev _delta is a signed integer so that it can also represent a debt
-     * decrease.
-     *
-     * This should return the annual expected return at the current timestamp
-     * represented as 1e18.
-     *
-     *      ie. 10% == 1e17
-     *
-     * _delta will be == 0 to get the current apr.
-     *
-     * This will potentially be called during non-view functions so gas
-     * efficiency should be taken into account.
-     *
      * @param _strategy The token to get the apr for.
      * @param _delta The difference in debt.
      * @return _apr The expected apr for the strategy represented as 1e18.
@@ -84,6 +71,8 @@ contract CrvUsdSturdyLenderAprOracle is AprOracleBase {
     ) external view override returns (uint256 _apr) {
         SturdyLender _lenderStrategy = SturdyLender(_strategy);
         IStrategy _sturdyAggregator = _lenderStrategy.vault();
+
+        _apr = APR_ORACLE.getCurrentApr(address(_sturdyAggregator));
 
         uint256 _vaultShares = _sturdyAggregator.balanceOf(_strategy);
         uint256 _vaultTotalSupply = _sturdyAggregator.totalSupply();
@@ -101,8 +90,6 @@ contract CrvUsdSturdyLenderAprOracle is AprOracleBase {
         }
 
         uint256 _vaultPercentSupply = (_vaultShares * WAD) / _vaultTotalSupply;
-
-        _apr = APR_ORACLE.getCurrentApr(address(_sturdyAggregator));
 
         ISturdyRewardConfig.RewardInfo[] memory _rewardInfo = getRewardInfo(
             address(_sturdyAggregator)
