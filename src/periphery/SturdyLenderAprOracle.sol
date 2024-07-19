@@ -11,8 +11,8 @@ import {SturdyLender} from "../Strategies/Sturdy/SturdyLender.sol";
 interface ISturdyRewardConfig {
     struct RewardInfo {
         address rewardToken;
-        uint256 epochStart;
-        uint256 epochEnd;
+        uint256 epochStart; // block start
+        uint256 epochEnd;   // block end
         uint256 amount;
         uint256 decimal;
     }
@@ -105,7 +105,7 @@ contract CrvUsdSturdyLenderAprOracle is AprOracleBase {
 
             (, int256 _rewardAmountWeth) = Simulate.simulateSwap(
                 IUniswapV3Pool(UNIV3_STURDY_WETH_POOL),
-                true,
+                true,  // zeroForOne, Sturdy < WETH
                 int256(_rewardAmount),
                 MIN_SQRT_RATIO + 1
             );

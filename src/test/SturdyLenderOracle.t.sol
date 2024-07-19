@@ -70,6 +70,7 @@ contract CrvUsdSturdyLenderAprOracleTest is Setup {
         uint256 positiveDebtChangeApr = oracle.aprAfterDebtChange(_strategy, int256(_delta));
 
         assertGt(currentApr, positiveDebtChangeApr, "positive change");
+        assertFalse(true);
     }
 
     function test_oracle(uint256 _amount, uint16 _percentChange) public {
